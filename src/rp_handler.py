@@ -2,6 +2,8 @@
 
 import os
 import predict
+import base64
+import tempfile
 
 import runpod
 from runpod.serverless.utils.rp_validator import validate
@@ -12,34 +14,44 @@ from rp_schema import INPUT_VALIDATIONS
 MODEL = predict.Predictor()
 MODEL.setup()
 
+def base64_to_tempfile(base64_file: str) -> str:
+    '''
+    Convert base64 file to tempfile.
+
+    Parameters:
+    base64_file (str): Base64 file
+
+    Returns:
+    str: Path to tempfile
+    '''
+    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_file:
+        temp_file.write(base64.b64decode(base64_file))
+
+    return temp_file.name
+
+
 
 def run(job):
-    '''
-    Run inference on the model.
-    Returns output path, width the seed used to generate the image.
-    '''
+
     job_input = job['input']
 
-    # Setting the float parameters
-    job_input['temperature'] = float(job_input.get('temperature', 0))
-    job_input['patience'] = float(job_input.get('patience', 0))
-    job_input['length_penalty'] = float(job_input.get('length_penalty', 0))
-    job_input['temperature_increment_on_fallback'] = float(
-        job_input.get('temperature_increment_on_fallback', 0.2)
-    )
-    job_input['compression_ratio_threshold'] = float(
-        job_input.get('compression_ratio_threshold', 2.4)
-    )
-    job_input['logprob_threshold'] = float(job_input.get('logprob_threshold', -1.0))
-    job_input['no_speech_threshold'] = 0.6
+    input_validation = validate(job_input, INPUT_VALIDATIONS)
 
-    # Input validation
-    validated_input = validate(job_input, INPUT_VALIDATIONS)
+    if 'errors' in input_validation:
+        return {"error": input_validation['errors']}
+    job_input = input_validation['validated_input']
 
-    if 'errors' in validated_input:
-        return {"error": validated_input['errors']}
+    if not job_input.get('audio', False) and not job_input.get('audio_base64', False):
+        return {'error': 'Must provide either audio or audio_base64'}
 
-    job_input['audio'] = download_files_from_urls(job['id'], [job_input['audio']])[0]
+    if job_input.get('audio', False) and job_input.get('audio_base64', False):
+        return {'error': 'Must provide either audio or audio_base64, not both'}
+
+    if job_input.get('audio', False):
+        audio_input = download_files_from_urls(job['id'], [job_input['audio']])[0]
+
+    if job_input.get('audio_base64', False):
+        audio_input = base64_to_tempfile(job_input['audio_base64'])
 
     whisper_results = MODEL.predict(
         audio=job_input["audio"],
