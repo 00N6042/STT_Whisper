@@ -1,7 +1,13 @@
 INPUT_VALIDATIONS = {
     'audio': {
         'type': str,
-        'required': True
+        'required': False,
+        'default': None
+    },
+    'audio_base64': {
+        'type': str,
+        'required': False,
+        'default': None
     },
     'model': {
         'type': str,
@@ -11,12 +17,17 @@ INPUT_VALIDATIONS = {
     'transcription': {
         'type': str,
         'required': False,
-        'default': 'plain text'
+        'default': 'plain_text'
     },
     'translate': {
         'type': bool,
         'required': False,
         'default': False
+    },
+    'translation': {
+        'type': str,
+        'required': False,
+        'default': 'plain_text'
     },
     'language': {
         'type': str,
@@ -41,12 +52,12 @@ INPUT_VALIDATIONS = {
     'patience': {
         'type': float,
         'required': False,
-        'default': None
+        'default': 1.0
     },
     'length_penalty': {
         'type': float,
         'required': False,
-        'default': None
+        'default': 0
     },
     'suppress_tokens': {
         'type': str,
@@ -82,5 +93,15 @@ INPUT_VALIDATIONS = {
         'type': float,
         'required': False,
         'default': 0.6
-    }
+    },
+    'enable_vad': {
+        'type': bool,
+        'required': False,
+        'default': False
+    },
+    'word_timestamps': {
+        'type': bool,
+        'required': False,
+        'default': False
+    },
 }
