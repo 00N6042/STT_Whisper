@@ -34,6 +34,19 @@ def base64_to_tempfile(base64_file: str) -> str:
 def run(job):
 
     job_input = job['input']
+    
+    # Setting the float parameters
+    job_input['temperature'] = float(job_input.get('temperature', 0))
+    job_input['patience'] = float(job_input.get('patience', 0))
+    job_input['length_penalty'] = float(job_input.get('length_penalty', 0))
+    job_input['temperature_increment_on_fallback'] = float(
+        job_input.get('temperature_increment_on_fallback', 0.2)
+    )
+    job_input['compression_ratio_threshold'] = float(
+        job_input.get('compression_ratio_threshold', 2.4)
+    )
+    job_input['logprob_threshold'] = float(job_input.get('logprob_threshold', -1.0))
+    job_input['no_speech_threshold'] = 0.6
 
     input_validation = validate(job_input, INPUT_VALIDATIONS)
 
