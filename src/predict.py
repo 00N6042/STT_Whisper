@@ -36,7 +36,7 @@ class Predictor:
                 print(f"Model {model_name} could not be found.")
                 return None, None
 
-        model_names = ["tiny", "base", "small", "medium", "large-v1", "large-v2"]
+        model_names = ["base"]
         with ThreadPoolExecutor() as executor:
             for model_name, model in executor.map(load_model, model_names):
                 if model_name is not None:
