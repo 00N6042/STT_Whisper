@@ -54,7 +54,7 @@ def run(job):
         audio_input = base64_to_tempfile(job_input['audio_base64'])
 
     whisper_results = MODEL.predict(
-        audio=job_input["audio"],
+        audio=audio_input,
         model_name=job_input.get("model", 'base'),
         transcription=job_input.get('transcription', 'plain_text'),
         translate=job_input.get('translate', False),
