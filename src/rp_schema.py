@@ -24,11 +24,6 @@ INPUT_VALIDATIONS = {
         'required': False,
         'default': False
     },
-    'translation': {
-        'type': str,
-        'required': False,
-        'default': 'plain_text'
-    },
     'language': {
         'type': str,
         'required': False,
@@ -93,15 +88,5 @@ INPUT_VALIDATIONS = {
         'type': float,
         'required': False,
         'default': 0.6
-    },
-    'enable_vad': {
-        'type': bool,
-        'required': False,
-        'default': False
-    },
-    'word_timestamps': {
-        'type': bool,
-        'required': False,
-        'default': False
     },
 }
